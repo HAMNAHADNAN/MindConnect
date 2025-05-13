@@ -1,0 +1,29 @@
+com.example.mental_health_app-jetified-tracing-1.2.0-0 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\16c628e648c3c982620cd59df1f630f7\transformed\jetified-tracing-1.2.0\res
+com.example.mental_health_app-jetified-annotation-experimental-1.4.0-1 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\3cc8aafa8789d8888ff9fd49efac017e\transformed\jetified-annotation-experimental-1.4.0\res
+com.example.mental_health_app-core-runtime-2.2.0-2 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\3ff4ea69d6eb1542848adbfb5eed75ee\transformed\core-runtime-2.2.0\res
+com.example.mental_health_app-jetified-window-1.2.0-3 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\4ebb674aa41412bc7425383262a543b4\transformed\jetified-window-1.2.0\res
+com.example.mental_health_app-jetified-activity-1.8.1-4 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\4f72c04b8482dcdb24b8d073d79f2516\transformed\jetified-activity-1.8.1\res
+com.example.mental_health_app-lifecycle-runtime-2.7.0-5 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\510382138e25354741379153c2a8cfd9\transformed\lifecycle-runtime-2.7.0\res
+com.example.mental_health_app-jetified-startup-runtime-1.1.1-6 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\56bcd9de62d8cabb4e0a5f5e537bb37a\transformed\jetified-startup-runtime-1.1.1\res
+com.example.mental_health_app-lifecycle-livedata-2.7.0-7 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\5d4d99f117f20b7c330406641480f284\transformed\lifecycle-livedata-2.7.0\res
+com.example.mental_health_app-jetified-lifecycle-viewmodel-savedstate-2.7.0-8 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\60a3658e20535e19d04304b113218131\transformed\jetified-lifecycle-viewmodel-savedstate-2.7.0\res
+com.example.mental_health_app-fragment-1.7.1-9 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\74d747bf5a2df4cbc887642510ce7085\transformed\fragment-1.7.1\res
+com.example.mental_health_app-lifecycle-livedata-core-2.7.0-10 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\791ac3879b79debb20a9bcb91ee22350\transformed\lifecycle-livedata-core-2.7.0\res
+com.example.mental_health_app-jetified-window-java-1.2.0-11 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\888143a07fdc2fd3bbd890278e61db87\transformed\jetified-window-java-1.2.0\res
+com.example.mental_health_app-jetified-core-1.0.0-12 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\952bd0f190fb86eeb742e5703b540c87\transformed\jetified-core-1.0.0\res
+com.example.mental_health_app-jetified-core-ktx-1.13.1-13 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\97aa38d7910a05b33d1deb335f58a4ed\transformed\jetified-core-ktx-1.13.1\res
+com.example.mental_health_app-jetified-lifecycle-livedata-core-ktx-2.7.0-14 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\a09ec6cb412a6b4e9dd0bc63c644afb6\transformed\jetified-lifecycle-livedata-core-ktx-2.7.0\res
+com.example.mental_health_app-jetified-profileinstaller-1.3.1-15 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\a90c82843e8fe5edc6502e3e0ddffa34\transformed\jetified-profileinstaller-1.3.1\res
+com.example.mental_health_app-jetified-savedstate-1.2.1-16 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\c7f356c6b7bc4a1b9bddc504383cad4c\transformed\jetified-savedstate-1.2.1\res
+com.example.mental_health_app-lifecycle-viewmodel-2.7.0-17 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\d6f55652d133759bf47167968a19049a\transformed\lifecycle-viewmodel-2.7.0\res
+com.example.mental_health_app-core-1.13.1-18 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\dd1864a705b6759b642410eb2c889f8d\transformed\core-1.13.1\res
+com.example.mental_health_app-jetified-lifecycle-process-2.7.0-19 C:\Users\Nehal Ikram\.gradle\caches\transforms-3\f9ded53b8d55eaa10a5be647a1329cf9\transformed\jetified-lifecycle-process-2.7.0\res
+com.example.mental_health_app-packaged_res-20 C:\Users\Nehal Ikram\AppData\Local\Pub\Cache\hosted\pub.dev\flutter_blue_plus_android-4.0.2\android\build\intermediates\packaged_res\debug
+com.example.mental_health_app-packaged_res-21 C:\Users\Nehal Ikram\AppData\Local\Pub\Cache\hosted\pub.dev\path_provider_android-2.2.17\android\build\intermediates\packaged_res\debug
+com.example.mental_health_app-pngs-22 E:\mental_health_app\android\app\build\generated\res\pngs\debug
+com.example.mental_health_app-resValues-23 E:\mental_health_app\android\app\build\generated\res\resValues\debug
+com.example.mental_health_app-packageDebugResources-24 E:\mental_health_app\android\app\build\intermediates\incremental\debug\packageDebugResources\merged.dir
+com.example.mental_health_app-packageDebugResources-25 E:\mental_health_app\android\app\build\intermediates\incremental\debug\packageDebugResources\stripped.dir
+com.example.mental_health_app-merged_res-26 E:\mental_health_app\android\app\build\intermediates\merged_res\debug
+com.example.mental_health_app-debug-27 E:\mental_health_app\android\app\src\debug\res
+com.example.mental_health_app-main-28 E:\mental_health_app\android\app\src\main\res
