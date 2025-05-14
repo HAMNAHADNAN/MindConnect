@@ -4,13 +4,73 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MoodTrackerPage extends StatefulWidget {
-  const MoodTrackerPage({Key? key}) : super(key: key);
+  final String userEmail;
+
+  const MoodTrackerPage({required this.userEmail, Key? key}) : super(key: key);
 
   @override
   _MoodTrackerPageState createState() => _MoodTrackerPageState();
 }
 
 class _MoodTrackerPageState extends State<MoodTrackerPage> {
+  String? _userName;
+  late DatabaseReference moodRef;
+  final TextEditingController _noteController = TextEditingController();
+  final List<Map<String, String?>> moodHistory = [];  // Handle nullable values
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserName();
+    moodRef = FirebaseDatabase.instance.ref().child('moods');
+    fetchMoodHistory();
+  }
+
+  Future<void> fetchUserName() async {
+    final DatabaseReference dbRef = FirebaseDatabase.instance.ref();
+    final DataSnapshot snapshot = await dbRef.child('users').get();
+
+    if (snapshot.exists) {
+      final users = snapshot.value as Map<dynamic, dynamic>;
+      for (var user in users.values) {
+        if (user['email'] == widget.userEmail) {
+          setState(() {
+            _userName = user['name'];
+          });
+          break;
+        }
+      }
+    }
+  }
+
+  void fetchMoodHistory() async {
+    moodRef.onValue.listen((event) {
+      final data = event.snapshot.value;
+      if (data != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          setState(() {
+            moodHistory.clear();
+            (data as Map).forEach((key, value) {
+              if (value is Map) {
+                final mood = value['mood'] ?? 'assets/emojis/neutral.png';
+                final note = value['note'] ?? 'No note';
+                final date = value['date'] ?? 'Unknown';
+
+                moodHistory.add({
+                  'mood': mood,
+                  'note': note,
+                  'date': date,
+                  'key': key,
+                });
+              }
+            });
+          });
+        });
+      }
+    });
+  }
+
   final List<Map<String, String>> moods = [
     {'emoji': 'assets/emojis/sleepy.png', 'label': 'Sleepy'},
     {'emoji': 'assets/emojis/surprised.png', 'label': 'Surprised'},
@@ -26,44 +86,6 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
   String? selectedMoodPath;
   String? selectedMoodLabel;
-  final TextEditingController _noteController = TextEditingController();
-  final List<Map<String, String>> moodHistory = [];
-
-  late DatabaseReference moodRef;
-
-  @override
-  void initState() {
-    super.initState();
-    moodRef = FirebaseDatabase.instance.ref().child('moods');
-    fetchMoodHistory();
-  }
-
-  void fetchMoodHistory() async {
-    moodRef.onValue.listen((event) {
-      final data = event.snapshot.value;
-      if (data != null) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          setState(() {
-            moodHistory.clear();
-            (data as Map).forEach((key, value) {
-              if (value is Map) {
-                final mood = value['mood'] ?? 'assets/emojis/sleepy.png';
-                final note = value['note'] ?? 'No note';
-                final date = value['date'] ?? 'Unknown';
-
-                moodHistory.add({
-                  'mood': mood,
-                  'note': note,
-                  'date': date,
-                });
-              }
-            });
-          });
-        });
-      }
-    });
-  }
 
   void submitMood() async {
     if (selectedMoodPath != null && _noteController.text.isNotEmpty) {
@@ -85,6 +107,13 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
     }
   }
 
+  void deleteMoodHistory(String key) async {
+    await moodRef.child(key).remove();
+    setState(() {
+      moodHistory.removeWhere((entry) => entry['key'] == key);
+    });
+  }
+
   @override
   void dispose() {
     _noteController.dispose();
@@ -95,6 +124,19 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFEFF3F9),
+      appBar: AppBar(
+        title: Text(
+          'Mood Tracker',
+          style: GoogleFonts.lexend(fontSize: 22, fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: const Color(0xFF244C98),
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            Navigator.pop(context);  // Navigate back to home screen
+          },
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -103,8 +145,8 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
               Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  'Hi there! 👋',
-                  style: GoogleFonts.poppins(
+                  _userName != null ? 'Hi, $_userName 👋' : 'Loading...',
+                  style: GoogleFonts.lexend(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF244C98),
@@ -115,7 +157,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                 alignment: Alignment.topLeft,
                 child: Text(
                   'How are you feeling today?',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.lexend(
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
                     color: Colors.black87,
@@ -191,7 +233,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                                       const SizedBox(height: 6),
                                       Text(
                                         moods[index]['label']!,
-                                        style: GoogleFonts.poppins(
+                                        style: GoogleFonts.lexend(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                           color: const Color(0xFF244C98),
@@ -228,7 +270,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                           icon: const Icon(Icons.send),
                           label: Text(
                             "Submit",
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.lexend(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
@@ -256,7 +298,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Mood History",
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.lexend(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: const Color(0xFF244C98),
@@ -271,7 +313,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                     ? Center(
                   child: Text(
                     "No moods tracked yet!",
-                    style: GoogleFonts.poppins(color: Colors.black54),
+                    style: GoogleFonts.lexend(color: Colors.black54),
                   ),
                 )
                     : ListView.builder(
@@ -300,11 +342,17 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                         ),
                         title: Text(entry['note'] ?? ''),
                         subtitle: Text(entry['date'] ?? ''),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            deleteMoodHistory(entry['key']!);
+                          },
+                        ),
                       ),
                     );
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),

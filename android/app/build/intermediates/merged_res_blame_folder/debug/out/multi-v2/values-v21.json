@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.example.mental_health_app-mergeDebugResources-24:/values-v21/values-v21.xml",
+            "outputFile": "com.example.mental_health_app-mergeDebugResources-33:/values-v21/values-v21.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Nehal Ikram\\.gradle\\caches\\transforms-3\\dd1864a705b6759b642410eb2c889f8d\\transformed\\core-1.13.1\\res\\values-v21\\values-v21.xml",

@@ -69,8 +69,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
-        '/register':(context) => RegisterPage(), // Add Login Route
-        '/home': (context) => MoodTrackerPage(), // or your main screen
+        '/register': (context) => RegisterPage(),
+        '/home': (context) => MoodTrackerPage(userEmail: 'user@example.com'), // Provide the userEmail here
       },
     );
   }

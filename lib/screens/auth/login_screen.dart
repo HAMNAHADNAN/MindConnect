@@ -1,7 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../mood_tracker/mood_tracker.dart';
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -37,7 +37,12 @@ class _LoginPageState extends State<LoginPage> {
         });
 
         if (isValid) {
-          Navigator.pushReplacementNamed(context, '/home');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MoodTrackerPage(userEmail: email), // 👈 Step 1 here
+            ),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Invalid email or password')),
