@@ -1,25 +1,34 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'screens/mood_tracker/mood_tracker.dart';
-import 'constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
+import 'screens/mood_tracker/mood_tracker.dart';
+import 'screens/auth/splash_screen.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/auth/register_screen.dart';
+import 'constants/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if(kIsWeb){
-  await Firebase.initializeApp(options: FirebaseOptions( apiKey: "AIzaSyDB-id4TH6iyiGXYcXNzG0voBlJjSmkxoc",
-      authDomain: "mindconnect-32f08.firebaseapp.com",
-      projectId: "mindconnect-32f08",
-      storageBucket: "mindconnect-32f08.firebasestorage.app",
-      messagingSenderId: "290416442896",
-      appId: "1:290416442896:web:7f4570357bdd7d4a6f5495",
-      measurementId: "G-DZ5J5VYQR3",
-    databaseURL: "https://mindconnect-32f08-default-rtdb.firebaseio.com"
-  )); }
-  else {
-    await  Firebase.initializeApp();// Initialize Firebase
+
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: FirebaseOptions(
+        apiKey: "AIzaSyDB-id4TH6iyiGXYcXNzG0voBlJjSmkxoc",
+        authDomain: "mindconnect-32f08.firebaseapp.com",
+        projectId: "mindconnect-32f08",
+        storageBucket: "mindconnect-32f08.appspot.com",
+        messagingSenderId: "290416442896",
+        appId: "1:290416442896:web:7f4570357bdd7d4a6f5495",
+        measurementId: "G-DZ5J5VYQR3",
+        databaseURL: "https://mindconnect-32f08-default-rtdb.firebaseio.com",
+      ),
+    );
+  } else {
+    await Firebase.initializeApp();
   }
+
   runApp(MyApp());
 }
 
@@ -30,6 +39,7 @@ class MyApp extends StatelessWidget {
       title: 'Mental Health App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        textTheme: GoogleFonts.lexendTextTheme(),
         scaffoldBackgroundColor: AppColor.background,
         primaryColor: AppColor.primary,
         appBarTheme: AppBarTheme(
@@ -41,7 +51,8 @@ class MyApp extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColor.primary,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           ),
         ),
@@ -54,7 +65,13 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: MoodTrackerPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => SplashScreen(),
+        '/login': (context) => LoginPage(),
+        '/register':(context) => RegisterPage(), // Add Login Route
+        '/home': (context) => MoodTrackerPage(), // or your main screen
+      },
     );
   }
 }
