@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mental_health_app/constants/app_colors.dart';
 
 class MoodTrackerPage extends StatefulWidget {
   final String userEmail;
@@ -42,18 +43,13 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
       });
 
       if (foundName != null && foundKey != null) {
-        print('✅ Found user with email: ${widget.userEmail}');
         setState(() {
           _userName = foundName;
           _userKey = foundKey;
           moodRef = FirebaseDatabase.instance.ref().child('users/$_userKey/moods');
         });
         fetchMoodHistory();
-      } else {
-        print('⚠️ No matching user found for email: ${widget.userEmail}');
       }
-    } else {
-      print('❌ No users found in database!');
     }
   }
 
@@ -137,15 +133,25 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEFF3F9),
+      backgroundColor: const Color(0xFFF4F7FB),
       appBar: AppBar(
         title: Text(
           'Mood Tracker',
-          style: GoogleFonts.lexend(fontSize: 22, fontWeight: FontWeight.w600),
+          style: GoogleFonts.lexend(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white),
         ),
-        backgroundColor: const Color(0xFF244C98),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: AppColor.darkGradient,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.home),
+          icon: const Icon(Icons.home, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -163,7 +169,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                   style: GoogleFonts.lexend(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF244C98),
+                    color: AppColor.dark,
                   ),
                 ),
                 Text(
@@ -175,8 +181,6 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // Mood Selector
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: BackdropFilter(
@@ -184,7 +188,11 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.45),
+                        gradient: LinearGradient(
+                          colors: AppColor.darkGradient,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
@@ -219,24 +227,22 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                                           height: isSelected ? 70 : 55,
                                           width: isSelected ? 70 : 55,
                                           decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? const Color(0xFF446CB6)
-                                                : const Color(0xFFAFCBEA),
+                                            color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
                                             shape: BoxShape.circle,
                                             boxShadow: [
                                               if (isSelected)
                                                 BoxShadow(
-                                                  color: Colors.blueAccent.withOpacity(0.4),
+                                                  color: Colors.white.withOpacity(0.6),
                                                   blurRadius: 8,
-                                                  spreadRadius: 3,
+                                                  spreadRadius: 2,
                                                 ),
                                             ],
                                           ),
                                           child: Center(
                                             child: Image.asset(
                                               moods[index]['emoji']!,
-                                              height: isSelected ? 70 : 65,
-                                              width: isSelected ? 70 : 65,
+                                              height: isSelected ? 70 : 60,
+                                              width: isSelected ? 70 : 60,
                                             ),
                                           ),
                                         ),
@@ -246,7 +252,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                                           style: GoogleFonts.lexend(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
-                                            color: const Color(0xFF244C98),
+                                            color: Colors.white,
                                           ),
                                         )
                                       ],
@@ -257,14 +263,12 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                             ),
                           ),
                           const SizedBox(height: 16),
-
-                          // Notes
                           TextField(
                             controller: _noteController,
                             maxLines: 3,
                             decoration: InputDecoration(
                               hintText: "Write your thoughts...",
-                              fillColor: Colors.white.withOpacity(0.8),
+                              fillColor: Colors.white.withOpacity(0.9),
                               filled: true,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
@@ -273,8 +277,6 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                             ),
                           ),
                           const SizedBox(height: 16),
-
-                          // Submit Button
                           ElevatedButton.icon(
                             onPressed: submitMood,
                             icon: const Icon(Icons.send),
@@ -286,8 +288,8 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF244C98),
-                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColor.dark,
                               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -299,22 +301,18 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
                 const Divider(thickness: 1, color: Colors.black12),
                 const SizedBox(height: 10),
-
                 Text(
                   "Mood History",
                   style: GoogleFonts.lexend(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF244C98),
+                    color: AppColor.dark,
                   ),
                 ),
                 const SizedBox(height: 10),
-
-                // Mood History List
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -325,7 +323,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(

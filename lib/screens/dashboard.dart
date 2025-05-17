@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'mood_tracker/mood_tracker.dart';
+import 'meditation/meditation.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userEmail;
-  //final String profileImageUrl;
-
-  const DashboardScreen({
-    super.key,
-    required this.userEmail,
-    //required this.profileImageUrl,
-  });
+  const DashboardScreen({super.key, required this.userEmail});
 
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
@@ -19,158 +14,232 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    Placeholder(), // Replace with Mood Tracker page
-    Placeholder(), // Replace with Meditation page
-    Placeholder(), // Replace with Community page
-    Placeholder(), // Replace with Profile/settings page
+  List<Widget> get _pages => [
+    _buildMainDashboard(),
+    const SessionsListPage(),
+    const Placeholder(),
+    MoodTrackerPage(userEmail: widget.userEmail),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F6FA),
-      body: SafeArea(
-        child: _currentIndex == 0 ? _buildMainDashboard() : _pages[_currentIndex],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        selectedItemColor: const Color(0xFF244C98),
-        unselectedItemColor: Colors.grey,
-        onTap: (int index) {
-          setState(() => _currentIndex = index);
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.self_improvement), label: 'Meditation'),
-          BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Community'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+      backgroundColor: const Color(0xFFF1F5FF),
+      body: SafeArea(child: _pages[_currentIndex]),
+      bottomNavigationBar: _buildBottomBar(),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 12,
+            offset: const Offset(0, -2),
+          ),
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        child: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          currentIndex: _currentIndex,
+          selectedItemColor: const Color(0xFF2D5DCA),
+          unselectedItemColor: Colors.grey.shade500,
+          type: BottomNavigationBarType.fixed,
+          onTap: (int index) {
+            setState(() => _currentIndex = index);
+          },
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Icons.spa), label: 'Meditate'),
+            BottomNavigationBarItem(icon: Icon(Icons.people_alt), label: 'Community'),
+            BottomNavigationBarItem(icon: Icon(Icons.mood), label: 'Mood'),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildMainDashboard() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFFEAF0FF), Color(0xFFF4F8FF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
         children: [
-          Row(
-            children: [
-              // CircleAvatar(
-              // radius: 28,
-              // backgroundImage: AssetImage(widget.profileImageUrl),
-              // ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Welcome",
-                    style: GoogleFonts.lexend(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  Text(
-                    widget.userEmail,
-                    style: GoogleFonts.lexend(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFF244C98),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
+          _buildWelcomeCard(),
           const SizedBox(height: 24),
-          Container(
-            width: double.infinity,
-            height: 150,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-          //     image: const DecorationImage(
-          //       image: AssetImage("assets/bg_image.png"),
-          //       fit: BoxFit.cover,
-          // ),
-          ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-          
-                const SizedBox(height: 6),
-                Text(
-                  "View your self-care tasks for today →",
-                  style: GoogleFonts.lexend(
-                    fontSize: 14,
-                    color: const Color(0xFF244C98),
-                  ),
-                ),
-              ],
+          _buildTasksBanner(),
+          const SizedBox(height: 28),
+          Text(
+            "Tools for a Better You",
+            style: GoogleFonts.lexend(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF2D5DCA),
             ),
           ),
-          const SizedBox(height: 24),
-          GridView.count(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            children: [
-              buildTile(context, "Mood Tracker", Icons.mood, () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MoodTrackerPage(userEmail: widget.userEmail),
-                  ),
-                );
-              }),
-              buildTile(context, "Meditation", Icons.self_improvement, () {}),
-              buildTile(context, "Therapist", Icons.support_agent, () {}),
-              buildTile(context, "Community", Icons.group, () {}),
-              buildTile(context, "Emergency Help", Icons.warning, () {}),
-            ],
+          const SizedBox(height: 16),
+          _buildFeatureTile(
+            icon: Icons.mood,
+            title: "Mood Journal",
+            subtitle: "Track your daily emotions",
+            onTap: () => setState(() => _currentIndex = 3),
           ),
-
-        ]
-      )
+          _buildFeatureTile(
+            icon: Icons.spa,
+            title: "Guided Meditations",
+            subtitle: "Relax your mind and body",
+            onTap: () => setState(() => _currentIndex = 1),
+          ),
+          _buildFeatureTile(
+            icon: Icons.support_agent,
+            title: "Therapist Support",
+            subtitle: "Talk to a professional",
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Therapist support coming soon.")),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
-  Widget buildTile(BuildContext context, String title, IconData icon, VoidCallback onTap) {
+  Widget _buildWelcomeCard() {
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF9DCEFF).withOpacity(0.4),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            radius: 32,
+            backgroundColor: Colors.white,
+            child: Icon(Icons.person, size: 36, color: Color(0xFF244C98)),
+          ),
+          const SizedBox(width: 18),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Welcome back,", style: GoogleFonts.lexend(color: Colors.white70, fontSize: 14)),
+              Text(
+                widget.userEmail.split('@')[0],
+                style: GoogleFonts.lexend(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTasksBanner() {
+    return Container(
+      height: 150,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          colors: [ Color(0xFF9DCEFF),Color(0xFF92A3FD)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          "Check today’s wellness goals →",
+          style: GoogleFonts.lexend(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,  // White looks good on blue gradient
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeatureTile({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        margin: const EdgeInsets.only(bottom: 18),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 6,
-              offset: const Offset(0, 4),
+              color: const Color(0xFFA1B5FF).withOpacity(0.15),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
-            Icon(icon, size: 36, color: const Color(0xFF244C98)),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: GoogleFonts.lexend(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF244C98),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Icon(icon, size: 28, color: Colors.white),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: GoogleFonts.lexend(
+                          fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(subtitle,
+                      style: GoogleFonts.lexend(fontSize: 13, color: Colors.grey[600])),
+                ],
               ),
             ),
+            const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey),
           ],
         ),
       ),

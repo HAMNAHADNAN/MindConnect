@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -36,8 +35,12 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     super.initState();
     _emailShakeController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _passwordShakeController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-    _emailOffsetAnimation = Tween<double>(begin: 0, end: 10).chain(CurveTween(curve: Curves.elasticIn)).animate(_emailShakeController);
-    _passwordOffsetAnimation = Tween<double>(begin: 0, end: 10).chain(CurveTween(curve: Curves.elasticIn)).animate(_passwordShakeController);
+    _emailOffsetAnimation = Tween<double>(begin: 0, end: 10)
+        .chain(CurveTween(curve: Curves.elasticIn))
+        .animate(_emailShakeController);
+    _passwordOffsetAnimation = Tween<double>(begin: 0, end: 10)
+        .chain(CurveTween(curve: Curves.elasticIn))
+        .animate(_passwordShakeController);
   }
 
   @override
@@ -91,10 +94,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     setState(() => _isLoading = true);
 
     try {
-      // Register using FirebaseAuth
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-
-      // Save additional info to database
       String uid = userCredential.user!.uid;
       await _dbRef.child('users').child(uid).set({
         'name': name,
@@ -137,11 +137,36 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+    const gradientStart = Color.fromARGB(255, 78, 149, 200);
+    const gradientEnd = Color.fromARGB(255, 133, 169, 220);
+    const primaryBlue = Color(0xFF244C98);
+
+    InputDecoration buildInputDecoration(String hint, IconData icon, {String? errorText, Widget? suffixIcon}) {
+      return InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.white70),
+        prefixIcon: Icon(icon, color: Colors.white70),
+        suffixIcon: suffixIcon,
+        errorText: errorText,
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.2),
+        contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: errorText != null ? Colors.red : Colors.white70),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(color: errorText != null ? Colors.red : primaryBlue, width: 2),
+        ),
+      );
+    }
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color.fromARGB(255, 78, 149, 200), Color.fromARGB(255, 133, 169, 220)],
+            colors: [gradientStart, gradientEnd],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -159,9 +184,10 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                     style: GoogleFonts.lexend(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF244C98),
+                      color: primaryBlue,
                     ),
                   ),
+                  const SizedBox(height: 6),
                   Text(
                     'Join us by filling the details below!',
                     style: GoogleFonts.lexend(
@@ -170,20 +196,38 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                       color: Colors.white,
                     ),
                   ),
-                  SizedBox(height: 20),
-                  _buildTextField(_nameController, 'Full Name', Icons.person),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 20),
+
+                  // Full Name
+                  TextField(
+                    controller: _nameController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: buildInputDecoration('Full Name', Icons.person),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // DOB with date picker
                   GestureDetector(
                     onTap: () => _selectDOB(context),
                     child: AbsorbPointer(
-                      child: _buildTextField(_dobController, 'Date of Birth', Icons.calendar_today),
+                      child: TextField(
+                        controller: _dobController,
+                        style: const TextStyle(color: Colors.white),
+                        decoration: buildInputDecoration('Date of Birth', Icons.calendar_today),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
+
+                  // Gender dropdown
                   DropdownButtonFormField<String>(
                     value: _selectedGender,
+                    dropdownColor: gradientEnd,
                     items: ['Male', 'Female', 'Other']
-                        .map((gender) => DropdownMenuItem(value: gender, child: Text(gender)))
+                        .map((gender) => DropdownMenuItem(
+                      value: gender,
+                      child: Text(gender, style: const TextStyle(color: Colors.white)),
+                    ))
                         .toList(),
                     onChanged: (value) {
                       setState(() {
@@ -192,20 +236,24 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                     },
                     decoration: InputDecoration(
                       hintText: 'Gender',
-                      prefixIcon: Icon(Icons.person_outline),
-                      contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                      hintStyle: TextStyle(color: Colors.white70),
+                      prefixIcon: const Icon(Icons.person_outline, color: Colors.white70),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.2),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.white),
+                        borderSide: BorderSide(color: Colors.white70),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.blueAccent, width: 2),
+                        borderSide: BorderSide(color: primaryBlue, width: 2),
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
+
+                  // Email field with shake animation
                   AnimatedBuilder(
                     animation: _emailShakeController,
                     builder: (context, child) {
@@ -213,26 +261,16 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                         offset: Offset(_emailOffsetAnimation.value, 0),
                         child: TextField(
                           controller: _emailController,
-                          decoration: InputDecoration(
-                            hintText: 'Email',
-                            errorText: _emailError,
-                            prefixIcon: Icon(Icons.email),
-                            contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: _emailError != null ? Colors.red : Colors.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: _emailError != null ? Colors.red : Colors.blueAccent, width: 2),
-                            ),
-                          ),
+                          style: const TextStyle(color: Colors.white),
+                          decoration: buildInputDecoration('Email', Icons.email, errorText: _emailError),
+                          keyboardType: TextInputType.emailAddress,
                         ),
                       );
                     },
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
+
+                  // Password field with shake animation
                   AnimatedBuilder(
                     animation: _passwordShakeController,
                     builder: (context, child) {
@@ -241,46 +279,40 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                         child: TextField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
-                          decoration: InputDecoration(
-                            hintText: 'Password',
+                          style: const TextStyle(color: Colors.white),
+                          decoration: buildInputDecoration(
+                            'Password',
+                            Icons.lock,
                             errorText: _passwordError,
-                            prefixIcon: Icon(Icons.lock),
                             suffixIcon: IconButton(
-                              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off),
+                              icon: Icon(_obscurePassword ? Icons.visibility : Icons.visibility_off, color: Colors.white70),
                               onPressed: () {
                                 setState(() {
                                   _obscurePassword = !_obscurePassword;
                                 });
                               },
                             ),
-                            contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: _passwordError != null ? Colors.red : Colors.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide(color: _passwordError != null ? Colors.red : Colors.blueAccent, width: 2),
-                            ),
                           ),
                         ),
                       );
                     },
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
+
                   _isLoading
-                      ? CircularProgressIndicator()
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : SizedBox(
                     width: 150,
                     height: 50,
                     child: ElevatedButton(
                       onPressed: _register,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF244C98),
+                        backgroundColor: primaryBlue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
+                        elevation: 5,
+                        shadowColor: primaryBlue.withOpacity(0.5),
                       ),
                       child: Text(
                         'Register',
@@ -292,7 +324,9 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                       ),
                     ),
                   ),
-                  SizedBox(height: 24),
+
+                  const SizedBox(height: 24),
+
                   TextButton(
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/login');
@@ -300,34 +334,16 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                     child: Text(
                       'Already have an account? Login',
                       style: GoogleFonts.lexend(
-                        color: const Color(0xFF244C98),
-                        fontSize: 12,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String hint, IconData icon) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        hintText: hint,
-        prefixIcon: Icon(icon),
-        contentPadding: EdgeInsets.symmetric(vertical: 14, horizontal: 18),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.white),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.blueAccent, width: 2),
         ),
       ),
     );

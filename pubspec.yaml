@@ -40,6 +40,7 @@ dependencies:
   firebase_auth: ^4.17.5
 
 
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -62,6 +63,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/emojis/
+
   uses-material-design: true
   # fonts:
   #   - family: Schyler
