@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'mood_tracker/mood_tracker.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userEmail;
@@ -120,14 +121,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
             children: [
-              buildTile(context, "Mood Tracker", Icons.mood, () {}),
+              buildTile(context, "Mood Tracker", Icons.mood, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MoodTrackerPage(userEmail: widget.userEmail),
+                  ),
+                );
+              }),
               buildTile(context, "Meditation", Icons.self_improvement, () {}),
               buildTile(context, "Therapist", Icons.support_agent, () {}),
               buildTile(context, "Community", Icons.group, () {}),
               buildTile(context, "Emergency Help", Icons.warning, () {}),
             ],
           ),
-    ]));
+
+        ]
+      )
+    );
   }
 
   Widget buildTile(BuildContext context, String title, IconData icon, VoidCallback onTap) {
