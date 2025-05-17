@@ -31,16 +31,29 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
     if (snapshot.exists) {
       final users = snapshot.value as Map<dynamic, dynamic>;
+      String? foundName;
+      String? foundKey;
+
       users.forEach((key, value) {
         if (value['email'] == widget.userEmail) {
-          setState(() {
-            _userName = value['name'];
-            _userKey = key;
-            moodRef = FirebaseDatabase.instance.ref().child('users/$_userKey/moods');
-            fetchMoodHistory();
-          });
+          foundName = value['name'];
+          foundKey = key;
         }
       });
+
+      if (foundName != null && foundKey != null) {
+        print('✅ Found user with email: ${widget.userEmail}');
+        setState(() {
+          _userName = foundName;
+          _userKey = foundKey;
+          moodRef = FirebaseDatabase.instance.ref().child('users/$_userKey/moods');
+        });
+        fetchMoodHistory();
+      } else {
+        print('⚠️ No matching user found for email: ${widget.userEmail}');
+      }
+    } else {
+      print('❌ No users found in database!');
     }
   }
 

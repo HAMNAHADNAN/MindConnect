@@ -70,7 +70,10 @@ class MyApp extends StatelessWidget {
         '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
-        '/home': (context) => MoodTrackerPage(userEmail: 'user@example.com'), // Provide the userEmail here
+        '/home': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as String;
+          return MoodTrackerPage(userEmail: args);
+        },
       },
     );
   }

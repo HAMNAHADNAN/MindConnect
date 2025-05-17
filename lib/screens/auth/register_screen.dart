@@ -1,15 +1,20 @@
-import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
   _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMixin {
-  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
+  final _auth = FirebaseAuth.instance;
+  final _dbRef = FirebaseDatabase.instance.ref();
+
   final _nameController = TextEditingController();
   final _dobController = TextEditingController();
   final _emailController = TextEditingController();
@@ -31,7 +36,6 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     super.initState();
     _emailShakeController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
     _passwordShakeController = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
-
     _emailOffsetAnimation = Tween<double>(begin: 0, end: 10).chain(CurveTween(curve: Curves.elasticIn)).animate(_emailShakeController);
     _passwordOffsetAnimation = Tween<double>(begin: 0, end: 10).chain(CurveTween(curve: Curves.elasticIn)).animate(_passwordShakeController);
   }
@@ -64,78 +68,57 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
     String gender = _selectedGender;
 
     if (name.isEmpty || dob.isEmpty || email.isEmpty || password.isEmpty || gender.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill in all fields')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please fill in all fields')));
       return;
     }
 
     bool valid = true;
-
     if (!isEmailValid(email)) {
       _emailError = "Enter a valid email address";
       _emailShakeController.forward(from: 0);
       valid = false;
     }
-
     if (!isPasswordStrong(password)) {
       _passwordError = "Password must have upper, lower, number, and 6+ characters";
       _passwordShakeController.forward(from: 0);
       valid = false;
     }
-
     if (!valid) {
       setState(() {});
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
-      DatabaseReference usersRef = _dbRef.child('users');
-      DataSnapshot snapshot = await usersRef.get();
+      // Register using FirebaseAuth
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
 
-      bool emailExists = false;
-      if (snapshot.exists) {
-        Map<dynamic, dynamic> users = snapshot.value as Map<dynamic, dynamic>;
-        users.forEach((key, value) {
-          if (value['email'] == email) {
-            emailExists = true;
-          }
-        });
+      // Save additional info to database
+      String uid = userCredential.user!.uid;
+      await _dbRef.child('users').child(uid).set({
+        'name': name,
+        'dob': dob,
+        'gender': gender,
+        'email': email,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Registration successful')));
+      Navigator.pushReplacementNamed(context, '/login');
+    } on FirebaseAuthException catch (e) {
+      String message = 'Something went wrong';
+      if (e.code == 'email-already-in-use') {
+        message = 'Email already registered';
+      } else if (e.code == 'weak-password') {
+        message = 'Password is too weak';
       }
-
-      if (emailExists) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Email already registered')),
-        );
-      } else {
-        await usersRef.push().set({
-          'name': name,
-          'dob': dob,
-          'gender': gender,
-          'email': email,
-          'password': password,
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration successful')),
-        );
-
-        Navigator.pushReplacementNamed(context, '/login');
-      }
-    } catch (error) {
-      print('Registration Error: $error');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Something went wrong')),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    } catch (e) {
+      print('Registration Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Unexpected error occurred')));
     }
 
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   Future<void> _selectDOB(BuildContext context) async {
@@ -289,26 +272,26 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                   _isLoading
                       ? CircularProgressIndicator()
                       : SizedBox(
-                          width: 150,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: _register,
-                            child: Text(
-                              'Register',
-                              style: GoogleFonts.lexend(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF244C98),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                            ),
-                          ),
+                    width: 150,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: _register,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF244C98),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
                         ),
+                      ),
+                      child: Text(
+                        'Register',
+                        style: GoogleFonts.lexend(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 24),
                   TextButton(
                     onPressed: () {
