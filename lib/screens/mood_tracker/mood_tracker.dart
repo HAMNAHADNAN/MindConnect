@@ -14,16 +14,15 @@ class MoodTrackerPage extends StatefulWidget {
 
 class _MoodTrackerPageState extends State<MoodTrackerPage> {
   String? _userName;
+  String? _userKey;
   late DatabaseReference moodRef;
   final TextEditingController _noteController = TextEditingController();
-  final List<Map<String, String?>> moodHistory = [];  // Handle nullable values
+  final List<Map<String, String?>> moodHistory = [];
 
   @override
   void initState() {
     super.initState();
     fetchUserName();
-    moodRef = FirebaseDatabase.instance.ref().child('moods');
-    fetchMoodHistory();
   }
 
   Future<void> fetchUserName() async {
@@ -32,14 +31,16 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
 
     if (snapshot.exists) {
       final users = snapshot.value as Map<dynamic, dynamic>;
-      for (var user in users.values) {
-        if (user['email'] == widget.userEmail) {
+      users.forEach((key, value) {
+        if (value['email'] == widget.userEmail) {
           setState(() {
-            _userName = user['name'];
+            _userName = value['name'];
+            _userKey = key;
+            moodRef = FirebaseDatabase.instance.ref().child('users/$_userKey/moods');
+            fetchMoodHistory();
           });
-          break;
         }
-      }
+      });
     }
   }
 
@@ -133,18 +134,18 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
         leading: IconButton(
           icon: const Icon(Icons.home),
           onPressed: () {
-            Navigator.pop(context);  // Navigate back to home screen
+            Navigator.pop(context);
           },
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   _userName != null ? 'Hi, $_userName 👋' : 'Loading...',
                   style: GoogleFonts.lexend(
                     fontSize: 22,
@@ -152,10 +153,7 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                     color: const Color(0xFF244C98),
                   ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(
+                Text(
                   'How are you feeling today?',
                   style: GoogleFonts.lexend(
                     fontSize: 16,
@@ -163,140 +161,137 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                     color: Colors.black87,
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-              // Mood Selector
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.45),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.blueAccent.withOpacity(0.2),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        )
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 100,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: moods.length,
-                            itemBuilder: (context, index) {
-                              final isSelected = selectedMoodPath == moods[index]['emoji'];
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedMoodPath = moods[index]['emoji'];
-                                    selectedMoodLabel = moods[index]['label'];
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: Column(
-                                    children: [
-                                      AnimatedContainer(
-                                        duration: const Duration(milliseconds: 300),
-                                        height: isSelected ? 70 : 55,
-                                        width: isSelected ? 70 : 55,
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? const Color(0xFF446CB6)
-                                              : const Color(0xFFAFCBEA),
-                                          shape: BoxShape.circle,
-                                          boxShadow: [
-                                            if (isSelected)
-                                              BoxShadow(
-                                                color: Colors.blueAccent.withOpacity(0.4),
-                                                blurRadius: 8,
-                                                spreadRadius: 3,
-                                              ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: Image.asset(
-                                            moods[index]['emoji']!,
-                                            height: isSelected ? 70 : 65,
-                                            width: isSelected ? 70 : 65,
+                // Mood Selector
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.45),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blueAccent.withOpacity(0.2),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 100,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: moods.length,
+                              itemBuilder: (context, index) {
+                                final isSelected = selectedMoodPath == moods[index]['emoji'];
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedMoodPath = moods[index]['emoji'];
+                                      selectedMoodLabel = moods[index]['label'];
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                                    child: Column(
+                                      children: [
+                                        AnimatedContainer(
+                                          duration: const Duration(milliseconds: 300),
+                                          height: isSelected ? 70 : 55,
+                                          width: isSelected ? 70 : 55,
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? const Color(0xFF446CB6)
+                                                : const Color(0xFFAFCBEA),
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              if (isSelected)
+                                                BoxShadow(
+                                                  color: Colors.blueAccent.withOpacity(0.4),
+                                                  blurRadius: 8,
+                                                  spreadRadius: 3,
+                                                ),
+                                            ],
+                                          ),
+                                          child: Center(
+                                            child: Image.asset(
+                                              moods[index]['emoji']!,
+                                              height: isSelected ? 70 : 65,
+                                              width: isSelected ? 70 : 65,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        moods[index]['label']!,
-                                        style: GoogleFonts.lexend(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: const Color(0xFF244C98),
-                                        ),
-                                      )
-                                    ],
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          moods[index]['label']!,
+                                          style: GoogleFonts.lexend(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: const Color(0xFF244C98),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                        // Notes
-                        TextField(
-                          controller: _noteController,
-                          maxLines: 3,
-                          decoration: InputDecoration(
-                            hintText: "Write your thoughts...",
-                            fillColor: Colors.white.withOpacity(0.8),
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(15),
-                              borderSide: BorderSide.none,
+                          // Notes
+                          TextField(
+                            controller: _noteController,
+                            maxLines: 3,
+                            decoration: InputDecoration(
+                              hintText: "Write your thoughts...",
+                              fillColor: Colors.white.withOpacity(0.8),
+                              filled: true,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                                borderSide: BorderSide.none,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
+                          const SizedBox(height: 16),
 
-                        // Submit Button
-                        ElevatedButton.icon(
-                          onPressed: submitMood,
-                          icon: const Icon(Icons.send),
-                          label: Text(
-                            "Submit",
-                            style: GoogleFonts.lexend(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          // Submit Button
+                          ElevatedButton.icon(
+                            onPressed: submitMood,
+                            icon: const Icon(Icons.send),
+                            label: Text(
+                              "Submit",
+                              style: GoogleFonts.lexend(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF244C98),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF244C98),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
-                          ),
-                        )
-                      ],
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
-              const Divider(thickness: 1, color: Colors.black12),
-              const SizedBox(height: 10),
+                const SizedBox(height: 20),
+                const Divider(thickness: 1, color: Colors.black12),
+                const SizedBox(height: 10),
 
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
+                Text(
                   "Mood History",
                   style: GoogleFonts.lexend(
                     fontSize: 18,
@@ -304,19 +299,12 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                     color: const Color(0xFF244C98),
                   ),
                 ),
-              ),
-              const SizedBox(height: 10),
+                const SizedBox(height: 10),
 
-              // Mood History List
-              Expanded(
-                child: moodHistory.isEmpty
-                    ? Center(
-                  child: Text(
-                    "No moods tracked yet!",
-                    style: GoogleFonts.lexend(color: Colors.black54),
-                  ),
-                )
-                    : ListView.builder(
+                // Mood History List
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: moodHistory.length,
                   itemBuilder: (context, index) {
                     final entry = moodHistory[index];
@@ -352,8 +340,8 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                     );
                   },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
