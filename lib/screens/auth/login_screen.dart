@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
 
       Navigator.pushReplacementNamed(
         context,
-        '/home',
+        '/dashboard',
         arguments: email,
       );
     } on FirebaseAuthException catch (e) {

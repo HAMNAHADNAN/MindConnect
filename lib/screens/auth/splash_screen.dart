@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mental_health_app/constants/app_colors.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }

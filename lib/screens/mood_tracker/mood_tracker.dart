@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 class MoodTrackerPage extends StatefulWidget {
   final String userEmail;
 
-  const MoodTrackerPage({required this.userEmail, Key? key}) : super(key: key);
+  const MoodTrackerPage({required this.userEmail, super.key});
 
   @override
   _MoodTrackerPageState createState() => _MoodTrackerPageState();
