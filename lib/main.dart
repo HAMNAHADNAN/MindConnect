@@ -11,6 +11,8 @@ import 'screens/auth/register_screen.dart';
 import 'screens/auth/profile_screen.dart';
 import 'constants/app_colors.dart';
 import 'screens/forum/forum_screen.dart';
+import 'screens/Emergency/emergency_screen.dart';
+import 'screens/Emergency/panic_help.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,10 +83,12 @@ class MyApp extends StatelessWidget {
           return MoodTrackerPage(userEmail: args);
         },
         '/dashboard': (context) {
-          final args = ModalRoute.of(context)!.settings.arguments as String;
-          return DashboardScreen(userEmail: args);
+          final args = ModalRoute.of(context)?.settings.arguments as String?;
+          return DashboardScreen(userEmail: args ?? 'guest@example.com');
         },
         '/forum': (context) => ForumHomeScreen(),
+        '/emergency': (context) => EnhancedEmergencyScreen(),
+        '/panicHelp': (context) => PanicHelpScreen(),
       },
     );
   }

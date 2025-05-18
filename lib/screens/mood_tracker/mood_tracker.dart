@@ -323,13 +323,17 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        gradient: LinearGradient(
+                          colors: AppColor.darkGradient,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(15),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
+                            color: Colors.blueAccent.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -339,10 +343,16 @@ class _MoodTrackerPageState extends State<MoodTrackerPage> {
                           height: 40,
                           width: 40,
                         ),
-                        title: Text(entry['note'] ?? ''),
-                        subtitle: Text(entry['date'] ?? ''),
+                        title: Text(
+                          entry['note'] ?? '',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          entry['date'] ?? '',
+                          style: const TextStyle(color: Colors.white70),
+                        ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.delete),
+                          icon: const Icon(Icons.delete, color: Colors.white),
                           onPressed: () {
                             deleteMoodHistory(entry['key']!);
                           },

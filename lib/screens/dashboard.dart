@@ -4,6 +4,7 @@ import 'mood_tracker/mood_tracker.dart';
 import 'meditation/meditation.dart';
 import 'forum/forum_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'Emergency/emergency_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userEmail;
@@ -117,12 +118,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onTap: () => setState(() => _currentIndex = 2),
           ),
           _buildFeatureTile(
-            icon: Icons.support_agent,
-            title: "Therapist Support",
-            subtitle: "Talk to a professional",
+            icon: Icons.call,
+            title: "Emergency Contact",
+            subtitle: "Get urgent help now",
             onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Therapist support coming soon.")),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EnhancedEmergencyScreen()),
               );
             },
           ),

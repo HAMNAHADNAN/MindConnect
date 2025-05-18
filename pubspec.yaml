@@ -38,6 +38,7 @@ dependencies:
   firebase_database: ^10.0.0
   cloud_firestore: ^4.14.0
   firebase_auth: ^4.17.5
+  url_launcher: ^6.2.5
 
 
 
