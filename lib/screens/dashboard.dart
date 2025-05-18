@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'mood_tracker/mood_tracker.dart';
 import 'meditation/meditation.dart';
+import 'forum/forum_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -15,12 +16,18 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentIndex = 0;
 
-  List<Widget> get _pages => [
-    _buildMainDashboard(),
-    const SessionsListPage(),
-    const Placeholder(),
-    MoodTrackerPage(userEmail: widget.userEmail),
-  ];
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      _buildMainDashboard(),
+      const SessionsListPage(),
+      ForumHomeScreen(),
+      MoodTrackerPage(userEmail: widget.userEmail),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +111,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             onTap: () => setState(() => _currentIndex = 1),
           ),
           _buildFeatureTile(
+            icon: Icons.people_alt,
+            title: "Community Forum",
+            subtitle: "Connect with others",
+            onTap: () => setState(() => _currentIndex = 2),
+          ),
+          _buildFeatureTile(
             icon: Icons.support_agent,
             title: "Therapist Support",
             subtitle: "Talk to a professional",
@@ -117,79 +130,79 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+
   void _showProfileMenu(BuildContext context, Offset offset) async {
-  final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
-  final selected = await showMenu(
-    context: context,
-    position: RelativeRect.fromRect(
-      Rect.fromPoints(offset, offset),
-      Offset.zero & overlay.size,
-    ),
-    items: [
-      const PopupMenuItem<String>(value: 'profile', child: Text('View Profile')),
-      const PopupMenuItem<String>(value: 'logout', child: Text('Logout')),
-    ],
-  );
+    final selected = await showMenu(
+      context: context,
+      position: RelativeRect.fromRect(
+        Rect.fromPoints(offset, offset),
+        Offset.zero & overlay.size,
+      ),
+      items: [
+        const PopupMenuItem<String>(value: 'profile', child: Text('View Profile')),
+        const PopupMenuItem<String>(value: 'logout', child: Text('Logout')),
+      ],
+    );
 
-  if (selected == 'profile') {
-    Navigator.pushNamed(context, '/profile', arguments: widget.userEmail);
-  } else if (selected == 'logout') {
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacementNamed(context, '/login');
+    if (selected == 'profile') {
+      Navigator.pushNamed(context, '/profile', arguments: widget.userEmail);
+    } else if (selected == 'logout') {
+      await FirebaseAuth.instance.signOut();
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
-}
-
 
   Widget _buildWelcomeCard() {
-  return GestureDetector(
-    onTapDown: (TapDownDetails details) {
-      _showProfileMenu(context, details.globalPosition);
-    },
-    child: Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    return GestureDetector(
+      onTapDown: (TapDownDetails details) {
+        _showProfileMenu(context, details.globalPosition);
+      },
+      child: Container(
+        padding: const EdgeInsets.all(22),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF92A3FD), Color(0xFF9DCEFF)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF9DCEFF).withOpacity(0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF9DCEFF).withOpacity(0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 32,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.person, size: 36, color: Color(0xFF244C98)),
-          ),
-          const SizedBox(width: 18),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Welcome back,", style: GoogleFonts.lexend(color: Colors.white70, fontSize: 14)),
-              Text(
-                widget.userEmail.split('@')[0],
-                style: GoogleFonts.lexend(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+        child: Row(
+          children: [
+            const CircleAvatar(
+              radius: 32,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.person, size: 36, color: Color(0xFF244C98)),
+            ),
+            const SizedBox(width: 18),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Welcome back,", style: GoogleFonts.lexend(color: Colors.white70, fontSize: 14)),
+                Text(
+                  widget.userEmail.split('@')[0],
+                  style: GoogleFonts.lexend(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            ],
-          )
-        ],
+              ],
+            )
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildTasksBanner() {
     return Container(
@@ -198,7 +211,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: const LinearGradient(
-          colors: [ Color(0xFF9DCEFF),Color(0xFF92A3FD)],
+          colors: [Color(0xFF9DCEFF), Color(0xFF92A3FD)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -210,7 +223,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           style: GoogleFonts.lexend(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: Colors.white,  // White looks good on blue gradient
+            color: Colors.white,
           ),
         ),
       ),

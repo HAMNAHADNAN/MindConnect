@@ -10,6 +10,7 @@ import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
 import 'screens/auth/profile_screen.dart';
 import 'constants/app_colors.dart';
+import 'screens/forum/forum_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,6 +84,7 @@ class MyApp extends StatelessWidget {
           final args = ModalRoute.of(context)!.settings.arguments as String;
           return DashboardScreen(userEmail: args);
         },
+        '/forum': (context) => ForumHomeScreen(),
       },
     );
   }

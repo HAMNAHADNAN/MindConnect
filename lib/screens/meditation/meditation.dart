@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mental_health_app/constants/app_colors.dart';
-// split-out file
 
 class SessionsListPage extends StatefulWidget {
   const SessionsListPage({super.key});
@@ -32,10 +31,10 @@ class _SessionsListPageState extends State<SessionsListPage> {
       sessionList = snap.docs.map((d) {
         final m = d.data();
         return {
-          'title'      : m['title']       ?? 'Untitled',
-          'duration'   : m['duration']    ?? 'Unknown',
+          'title': m['title'] ?? 'Untitled',
+          'duration': m['duration'] ?? 'Unknown',
           'description': m['description'] ?? 'No description',
-          'imageUrl'   : m['imageURL']    ?? '',
+          'imageUrl': m['imageURL'] ?? '',
         };
       }).toList();
     });
@@ -62,7 +61,6 @@ class _SessionsListPageState extends State<SessionsListPage> {
           style: TextStyle(color: AppColor.contentBg, fontWeight: FontWeight.bold),
         ),
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -76,7 +74,6 @@ class _SessionsListPageState extends State<SessionsListPage> {
     );
   }
 
-  /* ---------- Mood strip ---------- */
   Widget _buildMoodStrip() => SizedBox(
     height: 140,
     child: ListView.builder(
@@ -129,7 +126,6 @@ class _SessionsListPageState extends State<SessionsListPage> {
     ),
   );
 
-  /* ---------- Exercise list ---------- */
   Widget _buildExerciseList(BuildContext ctx) => sessionList.isEmpty
       ? const Center(child: Text('No exercises found.'))
       : ListView.builder(
@@ -177,15 +173,31 @@ class ExerciseDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.background,
+      // ExerciseDetailPage AppBar (Readable Title + Gradient Background)
       appBar: AppBar(
-        backgroundColor: AppColor.dark,
-        title: Text(title,
-            style: const TextStyle(
-              color: AppColor.contentBg,
-              fontWeight: FontWeight.bold,
-            )),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: AppColor.darkGradient,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: AppColor.contentBg,
+            letterSpacing: 1.1,
+          ),
+        ),
         iconTheme: const IconThemeData(color: AppColor.contentBg),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Container(
@@ -204,8 +216,7 @@ class ExerciseDetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               ClipRRect(
-                borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
                 child: Image.network(
                   imageUrl,
                   height: 200,
@@ -213,14 +224,16 @@ class ExerciseDetailPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+              // Inside ExerciseDetailPage -> body
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 24,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     color: AppColor.dark,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ),
@@ -235,21 +248,41 @@ class ExerciseDetailPage extends StatelessWidget {
               const Spacer(),
               Padding(
                 padding: const EdgeInsets.all(16),
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.dark,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: AppColor.darkGradient,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  onPressed: () {
-                    // TODO: Start exercise action
-                  },
-                  icon: const Icon(Icons.play_arrow),
-                  label: const Text(
-                    "Start Exercise",
-                    style: TextStyle(fontSize: 18, color: AppColor.contentBg),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        // TODO: Start exercise action
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(Icons.play_arrow, color: AppColor.contentBg),
+                            SizedBox(width: 8),
+                            Text(
+                              "Start Exercise",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColor.contentBg,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
