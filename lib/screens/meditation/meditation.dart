@@ -4,7 +4,7 @@ import 'package:mental_health_app/constants/app_colors.dart';
 // split-out file
 
 class SessionsListPage extends StatefulWidget {
-  const SessionsListPage({Key? key}) : super(key: key);
+  const SessionsListPage({super.key});
 
   @override
   State<SessionsListPage> createState() => _SessionsListPageState();
@@ -167,11 +167,11 @@ class ExerciseDetailPage extends StatelessWidget {
   final String imageUrl;
 
   const ExerciseDetailPage({
-    Key? key,
+    super.key,
     required this.title,
     required this.description,
     required this.imageUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -8,6 +8,7 @@ import 'screens/dashboard.dart';
 import 'screens/auth/splash_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
+import 'screens/auth/profile_screen.dart';
 import 'constants/app_colors.dart';
 
 void main() async {
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => SplashScreen(),
         '/login': (context) => LoginPage(),
         '/register': (context) => RegisterPage(),
+        '/profile': (context) => ProfileScreen(),
         '/home': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as String;
           return MoodTrackerPage(userEmail: args);
@@ -80,7 +82,6 @@ class MyApp extends StatelessWidget {
         '/dashboard': (context) {
           final args = ModalRoute.of(context)!.settings.arguments as String;
           return DashboardScreen(userEmail: args);
-          
         },
       },
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'mood_tracker/mood_tracker.dart';
 import 'meditation/meditation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userEmail;
@@ -116,9 +117,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+  void _showProfileMenu(BuildContext context, Offset offset) async {
+  final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+
+  final selected = await showMenu(
+    context: context,
+    position: RelativeRect.fromRect(
+      Rect.fromPoints(offset, offset),
+      Offset.zero & overlay.size,
+    ),
+    items: [
+      const PopupMenuItem<String>(value: 'profile', child: Text('View Profile')),
+      const PopupMenuItem<String>(value: 'logout', child: Text('Logout')),
+    ],
+  );
+
+  if (selected == 'profile') {
+    Navigator.pushNamed(context, '/profile', arguments: widget.userEmail);
+  } else if (selected == 'logout') {
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+}
+
 
   Widget _buildWelcomeCard() {
-    return Container(
+  return GestureDetector(
+    onTapDown: (TapDownDetails details) {
+      _showProfileMenu(context, details.globalPosition);
+    },
+    child: Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
@@ -159,8 +187,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           )
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildTasksBanner() {
     return Container(
