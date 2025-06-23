@@ -39,9 +39,27 @@
 2. **Install dependencies**
 flutter pub get
 
-3. **Add Firebase configuration**
+4. **Add Firebase configuration**
 Place your google-services.json file in android/app/
 Set up Firebase in your Flutter project as per Firebase Docs
 
-4. **Run the app**
+5. **Run the app**
 flutter run
+
+**📂 Project Structure**
+
+lib/
+ ┣ screens/          # All UI screens
+ ┣ widgets/          # Custom reusable widgets
+ ┣ models/           # Data models
+ ┣ services/         # Firebase/database services
+ ┗ main.dart         # App entry point
+
+**👥 Collaborators**
+
+Hamnah Adnan
+Fathima Raihaan Ihsan
+Umme Kulsoom
+Iqra Shahid
+Fizzah Farooq
+Mariam Faisal
