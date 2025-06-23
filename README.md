@@ -1,16 +1,47 @@
-# mind_connect
+# 🧠 MindConnect
 
-A new Flutter project.
+**MindConnect** is a Flutter-based mental health support app that helps users track their mood and emotional well-being. The app features a clean, user-friendly interface and stores data securely using Firebase Realtime Database.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📱 Features
 
-A few resources to get you started if this is your first Flutter project:
+- Mood tracking with personalized emojis/images  
+- Daily mood logging and history view  
+- Firebase Realtime Database integration  
+- Clean and responsive UI  
+- Secure user data storage (Name, DOB, Gender, Email, Password)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠️ Built With
+
+- **Flutter** & **Dart**
+- **Firebase Realtime Database**
+- **Figma** (UI/UX Design Reference)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Flutter SDK](https://docs.flutter.dev/get-started/install)
+- Android Studio or VS Code (with Flutter extension)
+- Firebase project setup
+
+### Installation
+
+1. **Clone the repository**
+   git clone https://github.com/HAMNAHADNAN/MindConnect.git
+   cd MindConnect
+
+2. **Install dependencies**
+flutter pub get
+
+3. **Add Firebase configuration**
+Place your google-services.json file in android/app/
+Set up Firebase in your Flutter project as per Firebase Docs
+
+4. **Run the app**
+flutter run
